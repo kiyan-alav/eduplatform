@@ -9,9 +9,7 @@ const envSchema = z.object({
     .default("development"),
   BCRYPT_SALT: z.coerce.number().default(12),
   ACCESS_EXPIRES: z.string().default("8h"),
-  LOG_LEVEL: z
-    .enum(["debug", "info"])
-    .default("info"),
+  LOG_LEVEL: z.enum(["debug", "info"]).default("info"),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);
