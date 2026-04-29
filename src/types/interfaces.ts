@@ -1,4 +1,5 @@
 import { Document, PaginateModel, Types } from "mongoose";
+import { CustomQueryOptions } from "../utils/query-builder";
 // ! ─── Consts Types ────────────────────────────────────────────
 export enum UserRole {
   ADMIN = "admin",
@@ -25,70 +26,36 @@ export enum NotificationType {
 }
 
 // ! ─── Filter Types ────────────────────────────────────────────
-export interface IBaseFilter {
-  page?: number | string;
-  limit?: number | string;
-  sort?: string;
-  search?: string;
-}
 
-export interface IUserFilter extends IBaseFilter {
+export interface IUserFilter extends CustomQueryOptions {
   email?: string;
   fullName?: string;
   role?: UserRole;
 }
 
-export type TUserMongoFilter = {
-  email?: string;
-  fullName?: { $regex: string; $option: string };
-  role?: { $in: ["admin", "instructor", "student"] };
-};
-
-export interface ICategoryFilter extends IBaseFilter {
+export interface ICategoryFilter extends CustomQueryOptions {
   title?: string;
 }
 
-export type TCategoryMongoFilter = {
-  title?: { $regex: string; $options: string };
-};
-
-export interface ICourseFilter extends IBaseFilter {
+export interface ICourseFilter extends CustomQueryOptions {
   title?: string;
   instructor?: string;
   level?: CourseLevel;
   status?: CourseStatus;
+  category?: string;
 }
 
-export type TCourseMongoFilter = {
-  title?: { $regex: string; $options: string };
-  instructor?: string;
-  level?: { $in: ["beginner", "intermediate", "advanced"] };
-  status?: { $in: ["pending", "approved", "rejected"] };
-};
-
-export interface IChapterFilter extends IBaseFilter {
+export interface IChapterFilter extends CustomQueryOptions {
   course?: string;
 }
 
-export type TChapterMongoFilter = {
-  course?: string;
-};
-
-export interface IRatingFilter extends IBaseFilter {
+export interface IRatingFilter extends CustomQueryOptions {
   course?: string;
 }
 
-export type TRatingMongoFilter = {
-  course?: string;
-};
-
-export interface IEnrollmentFilter extends IBaseFilter {
+export interface IEnrollmentFilter extends CustomQueryOptions {
   course?: string;
 }
-
-export type TEnrollmentMongoFilter = {
-  course?: string;
-};
 
 // ! ─── User Types ────────────────────────────────────────────
 export interface IUser {
