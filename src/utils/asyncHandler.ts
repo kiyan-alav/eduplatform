@@ -1,5 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 
+type TAsyncHandler = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => Promise<unknown>;
+
 export const asyncHandler =
-  (fn: Function) => (req: Request, res: Response, next: NextFunction) =>
-    Promise.resolve(fn(req, res, next)).catch(next);
+  (handler: TAsyncHandler) =>
+  (req: Request, res: Response, next: NextFunction) =>
+    Promise.resolve(handler(req, res, next)).catch(next);

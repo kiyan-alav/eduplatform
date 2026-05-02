@@ -62,7 +62,7 @@ export abstract class BaseRepository<T extends Document> {
     filter: QueryFilter<T>,
     options: PaginateOptions & {
       select?: string[];
-      populate?: PopulateOptions | PopulateOptions[];
+      populate?: PopulateOptions | PopulateOptions[] | string | string[];
     },
   ): Promise<PaginateResult<T>> {
     return this.model.paginate(filter, {

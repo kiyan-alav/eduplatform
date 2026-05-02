@@ -30,6 +30,7 @@ const UserSchema = new Schema<IUserDocument>(
     role: {
       type: String,
       enum: Object.values(UserRole),
+      required: [true, "Role must be defined!"],
     },
     avatar: {
       type: String,

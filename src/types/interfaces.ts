@@ -57,13 +57,25 @@ export interface IEnrollmentFilter extends CustomQueryOptions {
   course?: string;
 }
 
+// ! ─── Auth Types ────────────────────────────────────────────
+export interface RegisterDto {
+  fullName: string;
+  email: string;
+  password: string;
+}
+
+export interface LoginDto {
+  email: string;
+  password: string;
+}
+
 // ! ─── User Types ────────────────────────────────────────────
 export interface IUser {
   fullName: string;
   email: string;
   password: string;
   role: UserRole;
-  avatar: string;
+  avatar: string | null;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -76,14 +88,14 @@ export interface ICreateUser {
   fullName: string;
   email: string;
   password: string;
-  avatar?: string;
+  avatar?: string | null;
+  role?: UserRole;
 }
 
 export interface IUpdateUser {
   fullName?: string;
-  email?: string;
   password?: string;
-  avatar?: string;
+  avatar?: string | null;
 }
 
 // ! ─── Category Types ────────────────────────────────────────────

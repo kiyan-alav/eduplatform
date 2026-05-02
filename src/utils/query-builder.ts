@@ -24,7 +24,7 @@ export function buildQueryFilters<T>(
   filter: CustomQueryOptions,
   config: FilterConfig<T> = {},
 ): BuiltFilters<T> {
-  const mongoFilter: QueryFilter<T> = {} as QueryFilter<T>;;
+  const mongoFilter: QueryFilter<T> = {} as QueryFilter<T>;
   const options: BuiltFilters<T>["options"] = {};
 
   options.page = Number(filter.page) || 1;

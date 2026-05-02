@@ -11,15 +11,22 @@ export function errorMiddleware(
   const status = err.status || err.statusCode || 500;
   const message = err.message || "Internal Server Error";
 
-  logger.error({
-    status,
-    message,
-    stack: err.stack,
-  });
+  if (status >= 500) {
+    logger.error({
+      status,
+      message,
+      stack: err.stack,
+    });
+  } else {
+    logger.warn({
+      status,
+      message,
+    });
+  }
 
   res.status(status).json({
     success: false,
     message,
-    stack: ENV.NODE_ENV === "development" ? err.stack : undefined,
+    ...(ENV.NODE_ENV === "development" && { stack: err.stack }),
   });
 }
