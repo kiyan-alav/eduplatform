@@ -2,7 +2,12 @@ import bcrypt from "bcryptjs";
 import createHttpError from "http-errors";
 import { ENV } from "../configs/env";
 import { UserRepository } from "../repositories/UserRepository";
-import { ICreateUser, IUpdateUser, IUserFilter, UserRole } from "../types/interfaces";
+import {
+  ICreateUser,
+  IUpdateUser,
+  IUserFilter,
+  UserRole,
+} from "../types/interfaces";
 
 export class UserService {
   private readonly repo = new UserRepository();
@@ -54,5 +59,9 @@ export class UserService {
 
   async deleteUser(id: string) {
     return this.repo.deleteById(id);
+  }
+
+  async findByEmail(email: string) {
+    return this.repo.findByEmail(email);
   }
 }

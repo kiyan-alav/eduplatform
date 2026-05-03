@@ -4,6 +4,7 @@ const envSchema = z.object({
   PORT: z.coerce.number().default(5000),
   MONGO_URI: z.string().min(1),
   ACCESS_SECRET_KEY: z.string().min(10),
+  REFRESH_SECRET_KEY: z.string().min(10),
   NODE_ENV: z
     .enum(["development", "production", "test"])
     .default("development"),

@@ -1,11 +1,6 @@
 import { Document, PaginateModel, Types } from "mongoose";
 import { CustomQueryOptions } from "../utils/query-builder";
 // ! ─── Consts Types ────────────────────────────────────────────
-export enum UserRole {
-  ADMIN = "admin",
-  USER = "instructor",
-  STUDENT = "student",
-}
 
 export enum CourseLevel {
   BEGINNER = "beginner",
@@ -26,12 +21,6 @@ export enum NotificationType {
 }
 
 // ! ─── Filter Types ────────────────────────────────────────────
-
-export interface IUserFilter extends CustomQueryOptions {
-  email?: string;
-  fullName?: string;
-  role?: UserRole;
-}
 
 export interface ICategoryFilter extends CustomQueryOptions {
   title?: string;
@@ -67,35 +56,6 @@ export interface RegisterDto {
 export interface LoginDto {
   email: string;
   password: string;
-}
-
-// ! ─── User Types ────────────────────────────────────────────
-export interface IUser {
-  fullName: string;
-  email: string;
-  password: string;
-  role: UserRole;
-  avatar: string | null;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-
-export interface IUserDocument extends IUser, Document {}
-
-export interface IUserPaginateModel extends PaginateModel<IUserDocument> {}
-
-export interface ICreateUser {
-  fullName: string;
-  email: string;
-  password: string;
-  avatar?: string | null;
-  role?: UserRole;
-}
-
-export interface IUpdateUser {
-  fullName?: string;
-  password?: string;
-  avatar?: string | null;
 }
 
 // ! ─── Category Types ────────────────────────────────────────────

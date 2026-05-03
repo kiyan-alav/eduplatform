@@ -3,10 +3,17 @@ import mongoosePaginate from "mongoose-paginate-v2";
 import {
   IUserDocument,
   IUserPaginateModel,
+  UserProfileModel,
   UserRole,
-} from "../types/interfaces";
+} from "../../types/interfaces/user.types";
 
-const UserSchema = new Schema<IUserDocument>(
+const options = {
+  timestamps: true,
+  discriminatorKey: "role",
+  collection: "users",
+};
+
+const BaseUserSchema = new Schema<IUserDocument>(
   {
     fullName: {
       type: String,
@@ -21,6 +28,7 @@ const UserSchema = new Schema<IUserDocument>(
       unique: true,
       lowercase: true,
       trim: true,
+      index: true,
     },
     password: {
       type: String,
@@ -31,20 +39,29 @@ const UserSchema = new Schema<IUserDocument>(
       type: String,
       enum: Object.values(UserRole),
       required: [true, "Role must be defined!"],
+      index: true,
     },
     avatar: {
       type: String,
       default: null,
     },
+    profile: {
+      type: Schema.Types.ObjectId,
+      refPath: "profileModel",
+      default: null,
+    },
+    profileModel: {
+      type: String,
+      enum: Object.values(UserProfileModel),
+      default: null,
+    },
   },
-  {
-    timestamps: true,
-  },
+  options,
 );
 
-UserSchema.plugin(mongoosePaginate);
+BaseUserSchema.plugin(mongoosePaginate);
 
-export const UserModel = model<IUserDocument, IUserPaginateModel>(
+export const User = model<IUserDocument, IUserPaginateModel>(
   "User",
-  UserSchema,
+  BaseUserSchema,
 );

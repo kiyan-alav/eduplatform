@@ -6,13 +6,22 @@ export interface JwtPayload {
   role: string;
 }
 
-export const signAccessToken = function (payload: JwtPayload) {
+export const signAccessToken = (payload: JwtPayload) => {
   return jwt.sign(payload, ENV.ACCESS_SECRET_KEY, {
-    algorithm: "ES512",
-    expiresIn: "8h",
+    expiresIn: "15m",
+  });
+};
+
+export const signRefreshToken = (payload: JwtPayload) => {
+  return jwt.sign(payload, ENV.REFRESH_SECRET_KEY, {
+    expiresIn: "7d",
   });
 };
 
 export const verifyAccessToken = function (token: string): JwtPayload {
   return jwt.verify(token, ENV.ACCESS_SECRET_KEY) as JwtPayload;
+};
+
+export const verifyRefreshToken = (token: string) => {
+  return jwt.verify(token, ENV.REFRESH_SECRET_KEY) as JwtPayload;
 };

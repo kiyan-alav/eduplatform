@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { ENV } from "../configs/env";
 import { logger } from "../configs/logger";
+import { buildApiResponse } from "../types/apiResponse";
 
 export function errorMiddleware(
   err: any,
@@ -24,9 +25,11 @@ export function errorMiddleware(
     });
   }
 
-  res.status(status).json({
+  const response = buildApiResponse({
     success: false,
     message,
     ...(ENV.NODE_ENV === "development" && { stack: err.stack }),
   });
+
+  res.status(status).json(response);
 }

@@ -1,30 +1,31 @@
 import bcrypt from "bcryptjs";
 import createHttpError from "http-errors";
-import { signAccessToken } from "../configs/jwt";
-import { LoginDto, RegisterDto, UserRole } from "../types/interfaces";
+import {
+  signAccessToken,
+  signRefreshToken,
+  verifyRefreshToken,
+} from "../configs/jwt";
+import { RefreshTokenRepository } from "../repositories/RefreshTokenRepository";
+import { IUserDocument, LoginDto, RegisterDto, UserRole } from "../types/interfaces";
 import { UserService } from "./UserService";
 
 export class AuthService {
   private userService = new UserService();
+  private refreshRepo = new RefreshTokenRepository();
 
-  async register(data: RegisterDto) {
-    const exists = await this.userService["repo"].isEmailExists(data.email);
-
-    if (exists) {
-      throw createHttpError(409, "Email already exists");
-    }
-
-    const user = await this.userService.createUser({
-      fullName: data.fullName,
-      email: data.email,
-      password: data.password,
-      avatar: null,
-      role: UserRole.STUDENT,
-    });
-
-    const accessToken = signAccessToken({
+  private async generateTokens(user: IUserDocument) {
+    const payload = {
       userId: user._id.toString(),
       role: user.role,
+    };
+
+    const accessToken = signAccessToken(payload);
+    const refreshToken = signRefreshToken(payload);
+
+    await this.refreshRepo.create({
+      user: user._id,
+      token: refreshToken,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     });
 
     return {
@@ -36,7 +37,20 @@ export class AuthService {
         avatar: user.avatar,
       },
       accessToken,
+      refreshToken,
     };
+  }
+
+  async register(data: RegisterDto) {
+    const user = await this.userService.createUser({
+      fullName: data.fullName,
+      email: data.email,
+      password: data.password,
+      avatar: null,
+      role: UserRole.STUDENT,
+    });
+
+    return this.generateTokens(user);
   }
 
   async login(data: LoginDto) {
@@ -51,20 +65,27 @@ export class AuthService {
       throw createHttpError(401, "Invalid email or password");
     }
 
+    return this.generateTokens(user);
+  }
+
+  async refreshToken(token: string) {
+    const payload = verifyRefreshToken(token);
+
+    const stored = await this.refreshRepo.findByToken(token);
+
+    if (!stored) {
+      throw createHttpError(401, "Invalid refresh token");
+    }
+
     const accessToken = signAccessToken({
-      userId: user._id.toString(),
-      role: user.role,
+      userId: payload.userId,
+      role: payload.role,
     });
 
-    return {
-      user: {
-        id: user._id,
-        fullName: user.fullName,
-        email: user.email,
-        role: user.role,
-        avatar: user.avatar,
-      },
-      accessToken,
-    };
+    return { accessToken };
+  }
+
+  async logout(refreshToken: string) {
+    await this.refreshRepo.deleteByToken(refreshToken);
   }
 }

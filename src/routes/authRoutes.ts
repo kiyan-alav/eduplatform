@@ -18,5 +18,13 @@ router.get(
   authGuard,
   asyncHandler((req, res) => authController.me(req, res)),
 );
+router.post("/refresh", asyncHandler((req, res) =>
+  authController.refresh(req, res)
+));
+
+router.post("/logout", asyncHandler((req, res) =>
+  authController.logout(req, res)
+));
+
 
 export default router;
